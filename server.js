@@ -11,9 +11,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/faqs', require('./routes/faqRoutes'));
 app.use('/api/questions', require('./routes/questionRoutes'));
 app.use('/api/answers', require('./routes/answerRoutes'));
+app.use('api/tags', require('./routes/tagRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
