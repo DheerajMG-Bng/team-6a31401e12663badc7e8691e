@@ -14,6 +14,7 @@ const getAllFAQs = async (req, res) => {
         // ALL UNIQUE TAGS
         const uniqueTags = [...new Set(faqs.map(faq => faq.tag))];
 
+
         res.status(200).json({
             success : true,
             count : faqs.length,
