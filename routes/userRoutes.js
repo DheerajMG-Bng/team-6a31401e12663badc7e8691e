@@ -10,10 +10,10 @@ const {
 } = require('../controllers/userController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-// Public routes
+// PUBLIC ROUTES
 router.get('/:id', getUserById);
 
-// Protected routes
+// PROTECTED ROUTES
 router.get('/', protect, authorize('admin'), getAllUsers);
 router.put('/:id', protect, updateUser);
 router.delete('/:id', protect, authorize('admin'), deleteUser);
