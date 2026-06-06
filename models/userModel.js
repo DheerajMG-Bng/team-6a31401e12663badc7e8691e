@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrpyt = require('bcrpyt.js');
+const bcrpyt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
@@ -52,9 +52,7 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-userSchema.index({ email : 1 });
 userSchema.index({ created_at : -1 });
-
 userSchema.pre('save',async function(next) {
     if(!this.isModified('password')) {
         return next();

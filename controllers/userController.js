@@ -68,7 +68,7 @@ const getUserStats = async (req, res) => {
         const answerCount = await Answer.countDocuments({ user_id : userId });
         
         // COUNT TOTAL VOTES BY USER
-        const answerStats = await Answer.aggregrate([
+        const answerStats = await Answer.aggregate([
             { $match : { user_id : userId } },
             { $group : {
                 _id : null,
