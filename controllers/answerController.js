@@ -127,8 +127,7 @@ const updateAnswer = async (req, res) => {
             req.params.id,
             updateData,
             {new : true, runValidators : true}
-            .populate('user_id', 'name');
-        );
+        ).populate('user_id', 'name');
 
         res.status(200).json({
             success : true,
@@ -157,7 +156,7 @@ const deleteAnswer = async (req, res) => {
         }
 
         // CHECK IF USER IS OWNER OF ANSWER OR ADMIN - ONLY THEY CAN DELETE
-        if(answer.user_id.to_String() !== req.user_id && req.user_role !== 'admin') {
+        if(answer.user_id.toString() !== req.user_id && req.user_role !== 'admin') {
             return res.status(403).json({
                 success : false,
                 message : 'User not authorized to delete this answer'
