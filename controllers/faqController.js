@@ -266,7 +266,7 @@ const deleteFAQ = async (req, res) => {
 // GET QUESTIONS READY FOR FAQ CONVERSION FUNCTION - USED TO CHECK WHICH QUESTIONS CAN BE CONVERTED TO FAQ
 const getQuestionsReadyForFAQ = async (req, res) => {
     try {
-        const MIN_UPVOTES = parseInt(process.env.MIN_UPVOTES_FOR_FAQ) || 10;
+        const MIN_UPVOTES = parseInt(process.env.MIN_UPVOTES_FOR_FAQ) || 25;
 
         const questions = await Question.aggregate([
             {   // EXCLUDE ALREADY CONVERTED QUESTIONS
@@ -288,23 +288,45 @@ const getQuestionsReadyForFAQ = async (req, res) => {
                 }
             },
             {   // CALCULATE BEST ANSWER VOTES
-                $addFields : { bestAnswerVotes : { $max : '$answers.up_votes' } }
+                $addFields : { 
+                    bestAnswerVotes : { $max : '$answers.up_votes' }, 
+                    bestAnswer : {
+                        $arrayElemAt : [
+                            '$answers',
+                            { $indexOfArray : ['$answers.up_votes', { $max : '$answers.up_votes' }] }
+                        ]
+                    }
+                }
             },
             {   // FILTER BY THRESHOLD
                 $match : { bestAnswerVotes : { $gte : MIN_UPVOTES } }
             },
-            {   // SHOW IN DECREASING ORDER
-                $sort : { bestAnswerVotes : -1 }
+            {
+                $lookup : {
+                    from : 'users',
+                    localField : 'user_id',
+                    foreignField : '_id',
+                    as : 'author'
+                }
+            },
+            {
+                $unwind : { path : '$author', preserveNullAndEmptyArrays : true }
             },
             {   // RETURN REQUIRED FIELDS
                 $project : {
                     _id : 1,
                     title : 1,
-                    tag : 1,
-                    totalAnswers : { $size : '$answers' },
+                    description : 1,
                     bestAnswerVotes : 1,
+                    author : '$author.name',
+                    tag : 1,
+                    tags : 1,
+                    topAnswer : '$bestAnswer.answer'
                 }
-            }
+            },
+            {   // SHOW IN DECREASING ORDER
+                $sort : { bestAnswerVotes : -1 }
+            },
         ]);
 
         res.status(200).json({
