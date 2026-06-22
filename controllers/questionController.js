@@ -6,15 +6,39 @@ const Tag = require('../models/tagModel');
 const getAllQuestions = async (req, res) => {
     try {
         // ALL QUESTIONS, NEWEST FIRST
-        const questions = await Question.find()
-            .populate('user_id', 'name email')
-            .populate('tag_id', 'tag_name')
-            .sort({ created_at : -1});
+        const questions = await Question.aggregate([
+            {
+                $lookup: {
+                    from: 'answers',
+                    localField: '_id',
+                    foreignField: 'question_id',
+                    as: 'answers'
+                }
+            },
+            {
+                $addFields: {
+                    answers_count: { $size: '$answers' }
+                }
+            },
+            {
+                $project : {
+                    answers : 0
+                }
+            },
+            {
+                $sort : { created_at : -1 }
+            }
+        ]);
+
+        const populated = await Question.populate(questions, [
+            { path : 'user_id', select : 'name email' },
+            { path : 'tag_id', select : 'tag_name' }
+        ]);
 
         res.status(200).json({
             success : true,
-            count : questions.length,
-            data : questions
+            count : populated.length,
+            data : populated
         });
     } catch (err) {
         res.status(500).json({
@@ -40,9 +64,13 @@ const getQuestionById = async (req, res) => {
             });
         }
 
+        const answerCount = await Answer.countDocuments({ question_id : req.params.id });
+        const questionObj = question.toObject();
+        questionObj.answers_count = answerCount;
+
         res.status(200).json({
             success : true,
-            data : question
+            data : questionObj
         });
     } catch (err) {
         res.status(500).json({ 
@@ -56,14 +84,40 @@ const getQuestionById = async (req, res) => {
 const getQuestionsByUser = async (req, res) => {
     try {
         // FIND ALL QUESTIONS POSTED BY SPECIFIC USER
-        const questions = await Question.find({ user_id: req.params.userId })
-            .populate('tag_id', 'tag_name')
-            .sort({ created_at : -1 });
+        const userId = req.params.userId;
+
+        const questions = await Question.aggregate([
+             { $match: { user_id: userId } },
+             {
+                $lookup: {
+                    from: 'answers',
+                    localField: '_id',
+                    foreignField: 'question_id',
+                    as: 'answers'
+                }
+            },
+            {
+                $addFields: {
+                    answers_count: { $size: '$answers' }
+                }
+            },
+            {
+                $project: { answers: 0 }
+            },
+            {
+                $sort: { created_at: -1 }
+            }
+        ]);
+
+         const populated = await Question.populate(questions, [
+            { path: 'user_id', select: 'name email' },
+            { path: 'tag_id', select: 'tag_name' }
+        ]);
 
         res.status(200).json({
             success : true,
-            count : questions.length,
-            data : questions
+            count : populated.length,
+            data : populated
         });
     } catch (err) {
         res.status(500).json({ 
@@ -73,23 +127,53 @@ const getQuestionsByUser = async (req, res) => {
     }
 };
 
-
 // GET QUESTIONS BY TAG FUNCTION
 const getQuestionsByTag = async (req, res) => {
     try {
-        const tag = await Tag.findById(req.params.tagId);
+        const tagId = req.params.tagId;
+
+        const tag = await Tag.findById(tagId);
+        if (!tag) {
+            return res.status(404).json({
+                success: false,
+                message: 'Tag not found'
+            });
+        }
         
         // FIND QUESTIONS HAVING THIS TAG
-        const questions = await Question.find({ tag_id: req.params.tagId })
-            .populate('user_id', 'name email')
-            .populate('tag_id', 'tag_name')
-            .sort({ created_at : -1 });
+        const questions = await Question.aggregate([
+            { $match: { tag_id: tagId } },
+            {
+                $lookup: {
+                    from: 'answers',
+                    localField: '_id',
+                    foreignField: 'question_id',
+                    as: 'answers'
+                }
+            },
+            {
+                $addFields: {
+                    answers_count: { $size: '$answers' }
+                }
+            },
+            {
+                $project: { answers: 0 }
+            },
+            {
+                $sort: { created_at: -1 }
+            }
+        ]);
+
+        const populated = await Question.populate(questions, [
+            { path: 'user_id', select: 'name email' },
+            { path: 'tag_id', select: 'tag_name' }
+        ]);
 
         res.status(200).json({
             success : true,
-            tag : tag.tag_name || tag_name,
-            count : questions.length,
-            data : questions
+            tag : tag.tag_name,
+            count : populated.length,
+            data : populated
         });
     } catch (err) {
         res.status(500).json({ 
@@ -103,7 +187,7 @@ const getQuestionsByTag = async (req, res) => {
 const createQuestion = async (req, res) => {
     try {
         // GET FOLLOWING FROM THE USER
-        const { question, tag_id } = req.body;
+        const { question, description, tag_id } = req.body;
 
         // VALIDATE IF QUESTION TEXT IS EMPTY OR NOT
         if(!question || !question.trim()) {
@@ -116,7 +200,8 @@ const createQuestion = async (req, res) => {
         // CREATE NEW QUESTION
         const newQuestion = await Question.create({
             question : question.trim(),
-            tag_id : tag_id || [],
+            description : description || '',
+            tag_id : tag_id && tag_id.trim() ? tag_id : null,
             user_id : req.user_id,
             up_votes : 0,
             down_votes : 0,
@@ -144,7 +229,7 @@ const createQuestion = async (req, res) => {
 const updateQuestion = async (req, res) => {
     try {
         const { id } = req.params;
-        const { question, tag_id } = req.body;
+        const { question, description, tag_id } = req.body;
 
         // FIND QUESTION BY ID 
         const questionDoc = await Question.findById(id);
@@ -168,6 +253,7 @@ const updateQuestion = async (req, res) => {
 
         // UPDATE THE FIELD PROVIDED
         if(question) questionDoc.question = question.trim();
+        if (description !== undefined) questionDoc.description = description;
         if(tag_id) questionDoc.tag_id = tag_id;
 
         // SAVE THE QUESTION IN DATABASE
