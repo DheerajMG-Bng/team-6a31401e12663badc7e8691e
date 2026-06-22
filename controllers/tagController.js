@@ -90,7 +90,7 @@ const updateTag = async (req, res) => {
         const { tag_name } = req.body;
 
         // FIRST FIND THE TAG USING ID
-        const tag = await Tag.findById(tag_id);
+        const tag = await Tag.findById(id);
         if(!tag) {
             return res.status(404).json({
                 success : false,
