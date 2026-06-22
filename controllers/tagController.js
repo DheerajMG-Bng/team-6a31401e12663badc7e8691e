@@ -5,8 +5,31 @@ const Question = require('../models/questionModel');
 const getAllTags = async (req, res) => {
     try {
         // GET ALL TAGS IN ALPHABETICAL ORDER
-        const tags = await Tag.find()
-            .sort({ tag_name : 1 });
+        const tags = await Tag.aggregate([
+            {
+                $lookup : {
+                    from : 'questions',
+                    localField : '_id',
+                    foreignField : 'tag_id',
+                    as : 'questions'
+                }
+            },
+            {
+                $addFields: {
+                    questionCount: { $size: '$questions' }
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    tag_name: 1,
+                    questionCount: 1
+                }
+            }, 
+            {
+                $sort : { tag_name : 1 }
+            }
+        ]);
 
         res.status(200).json({
             success : true,
