@@ -1,0 +1,673 @@
+@import "./globals.css";
+
+.vins-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-base);
+  color: var(--text-dark);
+}
+
+.vins-container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.vins-section {
+  padding: 32px 0;
+}
+
+.vins-nav {
+  position: relative;
+  top: 0;
+  z-index: 50;
+  background: var(--bg-glass);
+  border-bottom: 1px solid var(--border-light);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all var(--transition-base);
+}
+
+.vins-nav-inner {
+  height: 64px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.vins-nav-logo {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.vins-nav-logo span {
+  color: var(--text-dark);
+}
+
+.vins-nav-search {
+  position: relative;
+  flex: 1;
+  max-width: 340px;
+}
+
+.vins-nav-search input {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px 0 40px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-gray);
+  background: var(--bg-elevated);
+  color: var(--text-dark);
+  outline: none;
+  transition: all var(--transition-base);
+}
+
+.vins-nav-search input::placeholder {
+  color: var(--text-placeholder);
+}
+
+.vins-nav-search input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 16px var(--accent-light);
+}
+
+.dark .vins-nav-search input:focus {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+}
+
+.vins-nav-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.vins-nav-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.vins-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all var(--transition-base);
+  border: none;
+  white-space: nowrap;
+}
+
+.vins-btn-primary {
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    var(--accent-dark)
+  );
+  color: white;
+}
+
+.vins-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-fab);
+}
+
+.dark .vins-btn-primary:hover {
+  box-shadow:
+    0 0 14px rgba(0, 240, 255, 0.35),
+    0 0 28px rgba(0, 240, 255, 0.18);
+}
+
+.vins-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border-gray);
+  color: var(--text-muted);
+}
+
+.vins-btn-ghost:hover {
+  background: var(--bg-elevated);
+  color: var(--text-dark);
+  transform: translateY(-2px);
+}
+
+.dark .vins-btn-ghost:hover {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.18);
+}
+
+.vins-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition-base);
+}
+
+.vins-avatar:hover {
+  transform: scale(1.06);
+}
+
+.dark .vins-avatar:hover {
+  box-shadow:
+    0 0 0 3px rgba(0, 240, 255, 0.2),
+    0 0 20px rgba(0, 240, 255, 0.25);
+}
+
+
+.vins-hero {
+  padding: 72px 24px 56px;
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.vins-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 14px;
+  margin-bottom: 20px;
+  border-radius: var(--radius-full);
+  background: var(--accent-light);
+  color: var(--accent);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.vins-hero h3 {
+  font-size: clamp(34px, 5vw, 54px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -1.6px;
+  margin-bottom: 18px;
+  background: linear-gradient(
+    135deg,
+    var(--neon-cyan),
+    var(--neon-magenta),
+    var(--neon-lime)
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+
+  animation: vins-shimmer 6s linear infinite;
+}
+
+.vins-hero h3 em {
+  font-style: normal;
+}
+
+.vins-hero p {
+  max-width: 520px;
+  margin: 0 auto;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+@keyframes vins-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.vins-tag-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 20px 0 16px;
+}
+
+.vins-tag-filter-btn {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-gray);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.vins-tag-filter-btn:hover {
+  background: var(--bg-elevated);
+  color: var(--text-dark);
+}
+
+.vins-tag-filter-btn.active {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.dark .vins-tag-filter-btn.active {
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.18);
+}
+
+.vins-faq-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.vins-faq-item {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-card);
+
+  --glow-color: var(--accent);
+}
+
+.vins-faq-item[data-category="About Internship"] {
+  border-left: 4px solid var(--neon-cyan);
+  --glow-color: var(--neon-cyan);
+}
+
+.vins-faq-item[data-category="Timing & Dates"] {
+  border-left: 4px solid var(--neon-magenta);
+  --glow-color: var(--neon-magenta);
+}
+
+.vins-faq-item[data-category="NOC"] {
+  border-left: 4px solid var(--neon-lime);
+  --glow-color: var(--neon-lime);
+}
+
+.vins-faq-item[data-category="Selection"] {
+  border-left: 4px solid var(--neon-amber);
+  --glow-color: var(--neon-amber);
+}
+
+.vins-faq-item[data-category="Work & Projects"] {
+  border-left: 4px solid var(--neon-cyan);
+  --glow-color: var(--neon-cyan);
+}
+
+.vins-faq-item[data-category="Communication"] {
+  border-left: 4px solid var(--neon-magenta);
+  --glow-color: var(--neon-magenta);
+}
+
+.vins-faq-item[data-category="Interview"] {
+  border-left: 4px solid var(--neon-lime);
+  --glow-color: var(--neon-lime);
+}
+
+.vins-faq-item[data-category="Certificate"] {
+  border-left: 4px solid var(--neon-amber);
+  --glow-color: var(--neon-amber);
+}
+
+.vins-faq-item[data-category="Rosetta"] {
+  border-left: 4px solid var(--neon-cyan);
+  --glow-color: var(--neon-cyan);
+}
+
+.vins-faq-item[data-category="Phase 1"] {
+  border-left: 4px solid var(--neon-magenta);
+  --glow-color: var(--neon-magenta);
+}
+
+.vins-faq-item[data-category="Spurti Points"] {
+  border-left: 4px solid var(--neon-lime);
+  --glow-color: var(--neon-lime);
+}
+
+.vins-faq-item[data-category="Yaksha"] {
+  border-left: 4px solid var(--neon-amber);
+  --glow-color: var(--neon-amber);
+}
+
+.vins-faq-item[data-category="ViBe Platform"] {
+  border-left: 4px solid var(--neon-cyan);
+  --glow-color: var(--neon-cyan);
+}
+
+.vins-faq-item[data-category="Team Formation"] {
+  border-left: 4px solid var(--neon-magenta);
+  --glow-color: var(--neon-magenta);
+}
+
+.vins-faq-item[data-category="VINS Program"] {
+  border-left: 4px solid var(--neon-lime);
+  --glow-color: var(--neon-lime);
+}
+
+.vins-faq-item[data-category="Phases & Badges"] {
+  border-left: 4px solid var(--neon-amber);
+  --glow-color: var(--neon-amber);
+}
+
+.vins-faq-item[data-category="Eligibility"] {
+  border-left: 4px solid var(--neon-cyan);
+  --glow-color: var(--neon-cyan);
+}
+
+.vins-faq-item[data-category="Attendance"] {
+  border-left: 4px solid var(--neon-magenta);
+  --glow-color: var(--neon-magenta);
+}
+
+.vins-faq-item[data-category="Offer Letter"] {
+  border-left: 4px solid var(--neon-lime);
+  --glow-color: var(--neon-lime);
+}
+
+.vins-faq-item[data-category="Mentorship"] {
+  border-left: 4px solid var(--neon-amber);
+  --glow-color: var(--neon-amber);
+}
+
+.vins-faq-item[data-category="Stipend"] {
+  border-left: 4px solid var(--neon-cyan);
+  --glow-color: var(--neon-cyan);
+}
+
+.vins-faq-item[data-category="Requirements"] {
+  border-left: 4px solid var(--neon-magenta);
+  --glow-color: var(--neon-magenta);
+}
+
+.vins-faq-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--glow-color);
+}
+
+.dark .vins-faq-item:hover {
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--glow-color) 35%, transparent),
+    0 0 28px color-mix(in srgb, var(--glow-color) 20%, transparent);
+}
+
+.vins-faq-item.expanded {
+  border-color: var(--glow-color);
+}
+
+.vins-faq-trigger {
+  width: 100%;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-dark);
+}
+
+.vins-faq-trigger:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.vins-faq-q-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.vins-faq-question {
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: var(--text-dark);
+  transition: color var(--transition-fast);
+}
+
+.vins-faq-item:hover .vins-faq-question {
+  color: var(--glow-color);
+}
+
+.vins-faq-chevron {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+}
+
+.vins-faq-chevron.open {
+  transform: rotate(180deg);
+}
+
+.vins-faq-answer {
+  padding: 0 18px 18px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.7;
+  animation: faqExpand 0.28s ease;
+}
+
+@keyframes faqExpand {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.vins-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.vins-section {
+  padding: 32px 0;
+}
+
+.vins-cta-strip {
+  margin-top: 36px;
+  margin-bottom: 48px;
+  padding: 26px 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  border-radius: var(--radius-lg);
+  background: var(--accent-light);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-base);
+}
+
+.vins-cta-strip:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.dark .vins-cta-strip:hover {
+  box-shadow:
+    0 0 18px rgba(0, 240, 255, 0.12),
+    0 0 40px rgba(0, 240, 255, 0.08);
+}
+
+.vins-cta-strip h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.vins-cta-strip p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 500px;
+}
+
+.vins-empty-state {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.dark .vins-nav-logo span {
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
+}
+
+.dark .vins-hero-eyebrow {
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.08);
+}
+
+.dark .vins-tag {
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.02);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-gray);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+@media (max-width: 992px) {
+  .vins-nav-search {
+    display: none;
+  }
+
+  .vins-nav-inner {
+    gap: 8px;
+    padding: 0 16px;
+  }
+
+  .vins-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .vins-hero {
+    padding: 48px 16px 36px;
+  }
+
+  .vins-hero h1 {
+    font-size: clamp(28px, 7vw, 42px);
+  }
+
+  .vins-container {
+    padding: 0 16px;
+  }
+
+  .vins-cta-strip {
+    flex-direction: column;
+    text-align: center;
+    padding: 22px;
+  }
+
+  .vins-cta-strip p {
+    max-width: none;
+  }
+
+  .vins-nav-inner {
+    height: auto;
+    min-height: 64px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .vins-nav-actions {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .vins-btn {
+    min-height: 36px;
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .vins-avatar {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 12px;
+  }
+
+  .vins-faq-trigger {
+    padding: 14px;
+  }
+
+  .vins-faq-answer {
+    padding: 0 14px 14px;
+  }
+}
+
+.home-page__highlight {
+  background: rgba(241, 248, 60, 0.35);
+  color: inherit;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
