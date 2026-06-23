@@ -1,4 +1,5 @@
 const Tag = require('../models/tagModel');
+const FAQ = require('../models/faqModel');
 const Question = require('../models/questionModel');
 
 // GET ALL TAGS FUNCTION
@@ -121,6 +122,8 @@ const updateTag = async (req, res) => {
             });
         }
 
+        const oldName = tag.tag_name;
+
         // UPDATE TAG NAME AND CHECK IF UPDATED VERSION ALREADY EXSISTS OR NOT
         if(tag_name && tag_name.trim()) {
             const newName = tag_name.trim().toLowerCase();
@@ -141,6 +144,13 @@ const updateTag = async (req, res) => {
 
         // SAVE THE UPDATES IN DATABASE
         await tag.save();
+
+        if(oldName && tag.tag_name !== oldName) {
+            await FAQ.updateMany(
+                { tag : oldName },
+                { tag : tag.tag_name }
+            );
+        }
 
         res.status(200).json({
             success : true,
@@ -176,6 +186,14 @@ const deleteTag = async (req, res) => {
                 success : false,
                 message : `Cannot delete Tag. It is used by ${questionUsingTag} questions`,
                 questionCount : questionUsingTag
+            });
+        }
+
+        const faqUsingTag = await FAQ.countDocuments({ tag: tag.tag_name });
+        if (faqUsingTag > 0) {
+            return res.status(400).json({
+                success: false,
+                message: `Cannot delete tag. It is used by ${faqUsingTag} FAQs.`
             });
         }
 

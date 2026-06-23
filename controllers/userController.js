@@ -64,7 +64,10 @@ const getUserStats = async (req, res) => {
         }
 
         // GET QUESTION AND ANSWER COUNT
-        const questionCount = await Question.countDocuments({ user_id : userId });
+        const questionCount = await Question.countDocuments({ 
+            user_id : userId,
+            isConvertedToFAQ : false
+        });
         const answerCount = await Answer.countDocuments({ user_id : userId });
         
         // COUNT TOTAL VOTES BY USER

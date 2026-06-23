@@ -8,6 +8,11 @@ const getAllQuestions = async (req, res) => {
     try {
         // ALL QUESTIONS, NEWEST FIRST
         const questions = await Question.aggregate([
+            { 
+                $match: { 
+                    isConvertedToFAQ: { $ne: true } 
+                } 
+            },
             {
                 $lookup: {
                     from: 'answers',
@@ -95,7 +100,12 @@ const getQuestionsByUser = async (req, res) => {
         }
 
         const questions = await Question.aggregate([
-             { $match: { user_id: new mongoose.Types.ObjectId(userId) } },
+             { 
+                $match: { 
+                    user_id: new mongoose.Types.ObjectId(userId),
+                    isConvertedToFAQ: { $ne: true } 
+                } 
+            },
              {
                 $lookup: {
                     from: 'answers',
@@ -157,7 +167,11 @@ const getQuestionsByTag = async (req, res) => {
         
         // FIND QUESTIONS HAVING THIS TAG
         const questions = await Question.aggregate([
-            { $match: { tag_id: new mongoose.Types.ObjectId(tagId) } },
+            { $match: { 
+                tag_id: new mongoose.Types.ObjectId(tagId),
+                isConvertedToFAQ: { $ne: true }
+                } 
+            },
             {
                 $lookup: {
                     from: 'answers',

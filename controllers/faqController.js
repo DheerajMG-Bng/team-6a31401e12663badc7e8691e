@@ -14,7 +14,6 @@ const getAllFAQs = async (req, res) => {
         // ALL UNIQUE TAGS
         const uniqueTags = [...new Set(faqs.map(faq => faq.tag))];
 
-
         res.status(200).json({
             success : true,
             count : faqs.length,
@@ -134,16 +133,21 @@ const convertToFAQ = async (req, res) => {
         const MIN_UPVOTES = parseInt(process.env.MIN_UPVOTES_FOR_FAQ) || 25;
 
         // VALIDATE ANSWER HAS MINIMUM UPVOTES
-        if(bestAnswer.up_votes < MIN_UPVOTES) {
+        if(question.up_votes < MIN_UPVOTES) {
             return res.status(400).json({
                 success : false,
-                message : `Cannot convert to FAQ as the best answer does not have the minimum required upvotes (${MIN_UPVOTES})`,    
+                message : `Cannot convert to FAQ as the question does not have the minimum required upvotes (${MIN_UPVOTES})`,    
                 currentVotes : bestAnswer.up_votes,
                 threshold : MIN_UPVOTES
             });
         }
 
-        const finalTag = tag || question.tag || 'general'
+        let tagName = 'general';
+        if (question.tag_id) {
+            const tagDoc = await Tag.findById(question.tag_id);
+            if (tagDoc) tagName = tagDoc.tag_name;
+        }
+        const finalTag = tag || tagName || 'general';
 
         // CREATE NEW FAQ
         const newFAQ = await FAQ.create({
@@ -271,7 +275,8 @@ const getQuestionsReadyForFAQ = async (req, res) => {
         const questions = await Question.aggregate([
             {   // EXCLUDE ALREADY CONVERTED QUESTIONS
                 $match : {
-                    isConvertedToFAQ : { $ne : true }
+                    isConvertedToFAQ : { $ne : true },
+                    up_votes: { $gte: MIN_UPVOTES }
                 }
             },
             {   // JOIN ANSWERS
@@ -288,8 +293,7 @@ const getQuestionsReadyForFAQ = async (req, res) => {
                 }
             },
             {   // CALCULATE BEST ANSWER VOTES
-                $addFields : { 
-                    bestAnswerVotes : { $max : '$answers.up_votes' }, 
+                $addFields : {  
                     bestAnswer : {
                         $arrayElemAt : [
                             '$answers',
@@ -297,9 +301,6 @@ const getQuestionsReadyForFAQ = async (req, res) => {
                         ]
                     }
                 }
-            },
-            {   // FILTER BY THRESHOLD
-                $match : { bestAnswerVotes : { $gte : MIN_UPVOTES } }
             },
             {
                 $lookup : {
@@ -317,7 +318,7 @@ const getQuestionsReadyForFAQ = async (req, res) => {
                     _id : 1,
                     title : 1,
                     description : 1,
-                    bestAnswerVotes : 1,
+                    up_votes : 1,
                     author : '$author.name',
                     tag : 1,
                     tags : 1,
@@ -325,7 +326,7 @@ const getQuestionsReadyForFAQ = async (req, res) => {
                 }
             },
             {   // SHOW IN DECREASING ORDER
-                $sort : { bestAnswerVotes : -1 }
+                $sort : { up_votes : -1 }
             },
         ]);
 
